@@ -1,0 +1,17 @@
+{
+  "parser": "typescript",
+  "overrides": [
+    {
+      "files": "*.yml",
+      "options": {
+        "parser": "yaml"
+      }
+    },
+    {
+      "files": "*.json",
+      "options": {
+        "parser": "json"
+      }
+    }
+  ]
+}

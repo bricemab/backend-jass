@@ -1,0 +1,310 @@
+{
+  "parser": "babel-eslint",
+  "overrides": [
+    {
+      "files": [
+        "**/*.json",
+        "**/*.ts",
+        "**/*.tsx"
+      ],
+      "parser": "@typescript-eslint/parser",
+      "plugins": [
+        "@typescript-eslint/eslint-plugin"
+      ],
+      // If adding a typescript-eslint version of an existing ESLint rule,
+      // make sure to disable the ESLint rule here.
+      "rules": {
+        "no-unused-vars": ["off"],
+        "no-undef": ["off"]
+      }
+    }
+  ],
+  "parserOptions": {
+    "sourceType": "module",
+    "allowImportExportEverywhere": true
+  },
+  "extends": [
+    "airbnb",
+    "plugin:prettier/recommended"
+  ],
+  "env": {
+    "browser": true,
+    "node": true,
+    "jest/globals": true
+  },
+  "rules": {
+    "react/static-property-placement": ["off"],
+    "import/extensions": [
+      0,
+      "never",
+      {
+        "ts": "never"
+      }
+    ],
+    "import/no-useless-path-segments": "off",
+    "indent": [
+      "error",
+      2,
+      {
+        "SwitchCase": 1
+      }
+    ],
+    "jest/no-disabled-tests": "warn",
+    "jest/no-focused-tests": "error",
+    "jest/no-identical-title": "error",
+    "arrow-parens": [
+      "off"
+    ],
+    "compat/compat": "error",
+    "consistent-return": "off",
+    "no-case-declarations": "off",
+    "comma-dangle": "off",
+    "generator-star-spacing": "off",
+    "no-bitwise": [
+      "error",
+      {
+        "allow": [
+          "&=",
+          "<<",
+          "~"
+        ]
+      }
+    ],
+    "prefer-promise-reject-errors": "off",
+    "no-await-in-loop": "off",
+    "import/no-unresolved": "error",
+    "import/no-extraneous-dependencies": "off",
+    "no-loop-func": "off",
+    "jsx-a11y/anchor-is-valid": "off",
+    "no-console": "off",
+    "no-plusplus": [
+      "error",
+      {
+        "allowForLoopAfterthoughts": true
+      }
+    ],
+    "no-param-reassign": "off",
+    "no-use-before-define": "off",
+    "no-underscore-dangle": "off",
+    "no-multi-assign": "off",
+    "promise/param-names": "error",
+    "promise/always-return": "off",
+    "lines-between-class-members": [
+      "error",
+      "always",
+      {
+        "exceptAfterSingleLine": true
+      }
+    ],
+    "promise/catch-or-return": "error",
+    "promise/no-native": "off",
+    "jsdoc/check-examples": "off",
+    "jsdoc/require-param-type": "off",
+    "jsdoc/check-types": "off",
+    "jsdoc/no-undefined-types": "off",
+    "jsdoc/require-description": "off",
+    "jsdoc/require-example": "off",
+    "jsdoc/require-returns": "off",
+    "jsdoc/require-returns-check": "off",
+    "jsdoc/require-returns-type": "off",
+    "jsdoc/valid-types": "off",
+    // general validation
+    "jsdoc/check-tag-names": "off",
+    // description validation
+    "jsdoc/newline-after-description": [
+      "off",
+      "always"
+    ],
+    "jsdoc/require-description-complete-sentence": "error",
+    // @param tag validation
+    "jsdoc/require-param": "off",
+    "jsdoc/check-param-names": "off",
+    "jsdoc/require-param-name": "off",
+    "jsdoc/require-hyphen-before-param-description": "off",
+    "jsdoc/require-param-description": "off",
+    // @return tag validation
+    "jsdoc/require-returns-description": "off"
+  },
+  "plugins": [
+    "import",
+    //    "eslint-plugin",
+    "@typescript-eslint/eslint-plugin",
+    "promise",
+    "compat",
+    "jest",
+    "jsdoc"
+  ],
+  "settings": {
+    "polyfills": [
+      "Promise"
+    ],
+    "import/resolver": {
+      "node": {
+        "eslint-import-resolver-typescript": true,
+        "extensions": [
+          ".json",
+          ".js",
+          ".ts",
+          ".tsx",
+          ".node"
+        ]
+      }
+    }
+  }
+}
+
+
+
+
+//{
+//  "parser": "babel-eslint",
+//  "overrides": [
+//    {
+//      "files": [
+//        "**/*.ts",
+//        "**/*.tsx"
+//      ],
+//      "parser": "@typescript-eslint/parser",
+//      "plugins": [
+//        "@typescript-eslint/eslint-plugin"
+//      ],
+//      // If adding a typescript-eslint version of an existing ESLint rule,
+//      // make sure to disable the ESLint rule here.
+//      "rules": {
+//        "no-unused-vars": ["off"],
+//        "no-undef": ["off"]
+//      }
+//    }
+//  ],
+//  "parserOptions": {
+//    "sourceType": "module",
+//    "allowImportExportEverywhere": true
+//  },
+//  "extends": [
+//    "airbnb",
+//    "plugin:prettier/recommended"
+//  ],
+//  "env": {
+//    "browser": true,
+//    "node": true,
+//    "jest/globals": true
+//  },
+//  "rules": {
+//    "react/static-property-placement": ["off"],
+//    "import/extensions": [
+//      0,
+//      "never",
+//      {
+//        "ts": "never"
+//      }
+//    ],
+//    "import/no-useless-path-segments": "off",
+//    "indent": [
+//      "error",
+//      2,
+//      {
+//        "SwitchCase": 1
+//      }
+//    ],
+//    "jest/no-disabled-tests": "warn",
+//    "jest/no-focused-tests": "error",
+//    "jest/no-identical-title": "error",
+//    "arrow-parens": [
+//      "off"
+//    ],
+//    "compat/compat": "error",
+//    "consistent-return": "off",
+//    "comma-dangle": "off",
+//    "generator-star-spacing": "off",
+//    "no-bitwise": [
+//      "error",
+//      {
+//        "allow": [
+//          "&=",
+//          "<<",
+//          "~"
+//        ]
+//      }
+//    ],
+//    "prefer-promise-reject-errors": "off",
+//    "import/no-unresolved": "error",
+//    "import/no-extraneous-dependencies": "off",
+//    "no-loop-func": "off",
+//    "jsx-a11y/anchor-is-valid": "off",
+//    "no-console": "off",
+//    "no-plusplus": [
+//      "error",
+//      {
+//        "allowForLoopAfterthoughts": true
+//      }
+//    ],
+//    "no-param-reassign": "off",
+//    "no-use-before-define": "off",
+//    "no-underscore-dangle": "off",
+//    "no-multi-assign": "off",
+//    "no-case-declarations": "off",
+//    "promise/param-names": "error",
+//    "promise/always-return": "off",
+//    "lines-between-class-members": [
+//      "error",
+//      "always",
+//      {
+//        "exceptAfterSingleLine": true
+//      }
+//    ],
+//    "promise/catch-or-return": "error",
+//    "promise/no-native": "off",
+//    "no-await-in-loop": "off",
+//    "jsdoc/check-examples": "off",
+//    "jsdoc/require-param-type": "off",
+//    "jsdoc/check-types": "error",
+//    "jsdoc/no-undefined-types": "error",
+//    "jsdoc/require-description": "error",
+//    "jsdoc/require-example": "off",
+//    "jsdoc/require-returns": "off",
+//    "jsdoc/require-returns-check": "error",
+//    "jsdoc/require-returns-type": "error",
+//    "jsdoc/valid-types": 1,
+//    // general validation
+//    "jsdoc/check-tag-names": "error",
+//    // description validation
+//    "jsdoc/newline-after-description": [
+//      "error",
+//      "always"
+//    ],
+//    "jsdoc/require-description-complete-sentence": "error",
+//    // @param tag validation
+//    "jsdoc/require-param": "error",
+//    "jsdoc/check-param-names": "error",
+//    "jsdoc/require-param-name": "error",
+//    "jsdoc/require-hyphen-before-param-description": "error",
+//    "jsdoc/require-param-description": "error",
+//    // @return tag validation
+//    "jsdoc/require-returns-description": "error"
+//  },
+//  "plugins": [
+//    "import",
+////    "eslint-plugin",
+//    "@typescript-eslint/eslint-plugin",
+//    "promise",
+//    "compat",
+//    "jest",
+//    "jsdoc"
+//  ],
+//  "settings": {
+//    "polyfills": [
+//      "Promise"
+//    ],
+//    "import/resolver": {
+//      "node": {
+//        "eslint-import-resolver-typescript": true,
+//        "extensions": [
+//          ".js",
+//          ".ts",
+//          ".tsx",
+//          ".node"
+//        ]
+//      }
+//    }
+//  }
+//}
