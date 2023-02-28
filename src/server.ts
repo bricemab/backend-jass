@@ -1,4 +1,4 @@
-import express, { Request, Response } from "express";
+import express, {Request, Response} from "express";
 import Logger from "./utils/Logger";
 import Utils from "./utils/Utils";
 import path from "path";
@@ -36,9 +36,22 @@ const setup = async () => {
 
   app.use(compression());
   app.use(fileUpload());
-  app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
-  app.use(bodyParser.json({ limit: "50mb" }));
-  app.use(cors());
+  app.use(bodyParser.urlencoded({limit: "50mb", extended: true}));
+  app.use(bodyParser.json({limit: "50mb"}));
+  app.use(cors({
+    origin: (origin, callback) => {
+      const whitelist = [
+        "https://jass.brice-mabillard.ch",
+        "https://rest.brice-mabillard.ch",
+        "https://ws.brice-mabillard.ch"
+      ]
+      if (whitelist.indexOf(origin) !== -1) {
+        callback(null, true)
+      } else {
+        callback(new Error('Not allowed by CORS'))
+      }
+    }
+  }));
   app.set("trust proxy", 1); // trust first proxy
   app.use(TokenManager.buildSessionToken)
 
@@ -71,9 +84,7 @@ const setup = async () => {
   const promisePool = await pool.promise();
   GlobalStore.addItem("dbConnection", promisePool);
 
-  const dbSettings = Utils.castMysqlRecordsToArray<
-    DatabaseSettings
-    >(
+  const dbSettings = Utils.castMysqlRecordsToArray<DatabaseSettings>(
     await Utils.getMysqlPool().execute(
       "SELECT * FROM settings"
     )
@@ -89,7 +100,7 @@ setup()
 
     app.use("/users", UsersRouter);
     app.get("*", (req: Request, res: Response) => {
-      res.json({ state: "Page dont exist" });
+      res.json({state: "Page dont exist"});
     });
 
     Logger.verbose(`Server starting`);
