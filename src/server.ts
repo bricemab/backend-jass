@@ -89,7 +89,7 @@ const setup = async () => {
       "SELECT * FROM settings"
     )
   );
-
+  console.log(dbSettings)
   GlobalStore.addItem("dbSettings", dbSettings)
   const ws = new WsManager();
   GlobalStore.addItem("ws", ws);
