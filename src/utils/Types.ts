@@ -1,8 +1,10 @@
-import {AuthenticationErrors, GeneralErrors, UserErrors} from "../Global/BackendErrors";
+import {AuthenticationErrors, GeneralErrors, IdeaErrors, UserErrors} from "../Global/BackendErrors";
 import {Roles} from "../modules/Users/Roles";
+import {UploadedFile} from "express-fileupload";
+import {Language} from "./Transalator";
 
 export interface ApplicationError {
-  code: GeneralErrors | AuthenticationErrors | UserErrors;
+  code: GeneralErrors | AuthenticationErrors | UserErrors | IdeaErrors;
   message: string;
   details?: any;
 }
@@ -14,7 +16,7 @@ export interface ApplicationResponse<DataType> {
 }
 
 export interface ApplicationError {
-  code: GeneralErrors | AuthenticationErrors | UserErrors;
+  code: GeneralErrors | AuthenticationErrors | UserErrors | IdeaErrors;
   message: string;
   details?: any;
 }
@@ -28,6 +30,7 @@ export interface UserSession {
   lastConnexionDate: Date;
   wsToken: string;
   role: Roles;
+  language: Language;
   isAdmin: boolean;
   archived: boolean;
 }
@@ -44,6 +47,7 @@ export interface ApplicationRequest<BodyData> extends Request {
   hasValidToken: boolean;
   tokenDecryptedData?: ApplicationUserSessionToken;
   body: BodyData;
+  files?: UploadedFile[];
   headers: {
     "x-access-token": string;
     "x-user-token"?: string;
@@ -55,5 +59,6 @@ export type ApplicationResponsePromise<DataType> = Promise<
   >;
 
 export enum TypeAccessTokenType {
-  WS_TOKEN = "WS_TOKEN"
+  WS_TOKEN = "WS_TOKEN",
+  PASSWORD_RESET = "PASSWORD_RESET"
 }

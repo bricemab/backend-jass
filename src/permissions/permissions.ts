@@ -8,5 +8,8 @@ export const Permissions = {
   },
   usersManager: {
     changePassword: "usersManager.changePassword"
+  },
+  ideasManager: {
+    newIdea: "ideasManager.newIdea"
   }
 };

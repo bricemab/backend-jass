@@ -15,6 +15,9 @@ import {Roles} from "../modules/Users/Roles";
 import jwt from "jsonwebtoken";
 import WsManager from "../services/Ws/WsManager";
 import GlobalStore from "../utils/GlobalStore";
+import Mailer from "../services/Mailer/Mailer";
+import Translator from "../utils/Transalator";
+import AccessTokensManager from "../modules/AccessTokens/AccessTokensManager";
 
 const UsersRouter = Router();
 
@@ -81,7 +84,7 @@ UsersRouter.post(
       }
 
       const wsToken = Utils.uniqueId(50);
-      const accessToken = new AccessTokenEntity(null, user.id, moment(), moment().add("8", "hours"), wsToken, TypeAccessTokenType.WS_TOKEN);
+      const accessToken = new AccessTokenEntity(null, user.id, moment(), moment().add("8", "hours"), wsToken, TypeAccessTokenType.WS_TOKEN, false);
       await accessToken.save();
 
       user.lastConnexionDate = moment();
@@ -183,7 +186,7 @@ UsersRouter.post(
       await user.setPasswordEncrypt(password);
       await user.save();
 
-      const accessToken = new AccessTokenEntity(null, user.id, moment(), moment().add("8", "hours"), wsToken, TypeAccessTokenType.WS_TOKEN);
+      const accessToken = new AccessTokenEntity(null, user.id, moment(), moment().add("8", "hours"), wsToken, TypeAccessTokenType.WS_TOKEN, false);
       await accessToken.save();
 
       const userJSON = user.toJSON();
@@ -212,6 +215,198 @@ UsersRouter.post(
       })
     })
 );
+
+UsersRouter.post(
+  "/ask-reset-password",
+  AclManager.routerHasPermission(Permissions.specialState.userLoggedOff),
+  RequestManager.asyncResolver(
+    async (
+      request: ApplicationRequest<{
+        token: string;
+        data: {
+          emailOrPseudo: string;
+        };
+      }>,
+      response: Response
+    ) => {
+      if (request.hasValidToken) {
+        return RequestManager.sendResponse(response, {
+          success: false,
+          error: {
+            code: AuthenticationErrors.AUTH_MUST_BE_LOGGED_OFF,
+            message: "You have to be logged off"
+          }
+        })
+      }
+
+      if (
+        !request.body.data &&
+        !request.body.data.emailOrPseudo
+      ) {
+        return RequestManager.sendResponse(response, {
+          success: false,
+          error: {
+            code: GeneralErrors.VALIDATION_ERROR,
+            message: "Data are not correctly provided"
+          }
+        })
+      }
+
+      const { emailOrPseudo } = request.body.data;
+
+      const userResponse = await UsersManager.findUserLogin(emailOrPseudo);
+      if (!userResponse.data && !userResponse.success) {
+        return RequestManager.sendResponse(response, {
+          success: false,
+          error: {
+            code: UserErrors.PSEUDO_OR_EMAIL_NOT_FOUND,
+            message: "Email or pseudo not find",
+            details: emailOrPseudo
+          }
+        })
+      }
+
+      const { user } = userResponse.data;
+      const token = Utils.uniqueId(50);
+      const tokenEntity = new AccessTokenEntity(null, user.id!, moment(), moment().add(1, "hours"), token, TypeAccessTokenType.PASSWORD_RESET, false);
+      await tokenEntity.save();
+      const resetPasswordResponse = await UsersManager.prepareResetPasswordMail(user, tokenEntity);
+      if (!resetPasswordResponse.success && !resetPasswordResponse.data) {
+        return RequestManager.sendResponse(response, resetPasswordResponse);
+      }
+      const { content } = resetPasswordResponse.data;
+      const Mailer = GlobalStore.getItem('mailer') as Mailer;
+      Mailer.addMailQueue(user.email, Translator.t('user.resetPasswordSubject', user.language), content, "E-Jass")
+      return RequestManager.sendResponse(response, {
+        success: true,
+        data: {}
+      })
+    })
+);
+
+UsersRouter.post(
+  "/verify-reset-password-token",
+  AclManager.routerHasPermission(Permissions.specialState.userLoggedOff),
+  RequestManager.asyncResolver(
+    async (
+      request: ApplicationRequest<{
+        token: string;
+        data: {
+          token: string;
+        };
+      }>,
+      response: Response
+    ) => {
+      if (request.hasValidToken) {
+        return RequestManager.sendResponse(response, {
+          success: false,
+          error: {
+            code: AuthenticationErrors.AUTH_MUST_BE_LOGGED_OFF,
+            message: "You have to be logged off"
+          }
+        })
+      }
+
+      if (
+        !request.body.data &&
+        !request.body.data.token
+      ) {
+        return RequestManager.sendResponse(response, {
+          success: false,
+          error: {
+            code: GeneralErrors.VALIDATION_ERROR,
+            message: "Data are not correctly provided"
+          }
+        })
+      }
+
+      const { token } = request.body.data;
+
+      const accessTokenResponse = await AccessTokensManager.findByToken(token);
+      if (!accessTokenResponse.success && !accessTokenResponse.data) {
+        return RequestManager.sendResponse(response, accessTokenResponse);
+      }
+      const { accessToken } = accessTokenResponse.data;
+      if (accessToken.expirationDate.diff(moment()) < 0 || accessToken.isFinished) {
+        return RequestManager.sendResponse(response, {
+          success: false,
+          data: {}
+        })
+      }
+
+      return RequestManager.sendResponse(response, {
+        success: true,
+        data: {}
+      })
+    })
+);
+
+UsersRouter.post(
+  "/reset-password",
+  AclManager.routerHasPermission(Permissions.specialState.userLoggedOff),
+  RequestManager.asyncResolver(
+    async (
+      request: ApplicationRequest<{
+        token: string;
+        data: {
+          token: string;
+          password: string;
+        };
+      }>,
+      response: Response
+    ) => {
+      if (request.hasValidToken) {
+        return RequestManager.sendResponse(response, {
+          success: false,
+          error: {
+            code: AuthenticationErrors.AUTH_MUST_BE_LOGGED_OFF,
+            message: "You have to be logged off"
+          }
+        })
+      }
+
+      if (
+        !request.body.data &&
+        !request.body.data.password &&
+        !request.body.data.token
+      ) {
+        return RequestManager.sendResponse(response, {
+          success: false,
+          error: {
+            code: GeneralErrors.VALIDATION_ERROR,
+            message: "Data are not correctly provided"
+          }
+        })
+      }
+
+      const { token, password } = request.body.data;
+
+      const accessTokenResponse = await AccessTokensManager.findByToken(token);
+      if (!accessTokenResponse.success && !accessTokenResponse.data) {
+        return RequestManager.sendResponse(response, accessTokenResponse);
+      }
+      const { accessToken } = accessTokenResponse.data;
+      if (accessToken.expirationDate.diff(moment()) < 0 || accessToken.isFinished) {
+        return RequestManager.sendResponse(response, {
+          success: false,
+          data: {}
+        })
+      }
+
+      const userResponse = await UsersManager.findById(accessToken.userId);
+      const { user } = userResponse.data!;
+      await user.setPasswordEncrypt(password);
+      await user.save();
+      accessToken.isFinished = true;
+      await accessToken.save();
+
+      return RequestManager.sendResponse(response, {
+        success: true,
+        data: {}
+      })
+    })
+);
+
 UsersRouter.post(
   "/test",
   AclManager.routerHasPermission(Permissions.specialState.userLoggedOff),

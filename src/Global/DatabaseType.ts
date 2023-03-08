@@ -1,4 +1,5 @@
 import {TypeAccessTokenType} from "../utils/Types";
+import {Language} from "../utils/Transalator";
 
 export interface DatabaseSettings {
   key: string;
@@ -14,6 +15,7 @@ export interface DatabaseUser{
   registration_date: Date;
   last_connexion_date: Date;
   ws_token: string;
+  language: Language;
   is_admin: boolean;
   is_archived: boolean;
 }
@@ -24,5 +26,6 @@ export interface DatabaseAccessToken {
   start_date: Date;
   expiration_date: Date;
   token: string;
-  type: TypeAccessTokenType
+  type: TypeAccessTokenType;
+  is_finished: number;
 }

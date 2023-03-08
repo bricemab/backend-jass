@@ -1,14 +1,15 @@
-import {ApplicationResponsePromise, DatabaseSettings} from "../../utils/Types";
+import {ApplicationResponsePromise} from "../../utils/Types";
 import Utils from "../../utils/Utils";
 import AccessTokenEntity from "./AccessTokenEntity";
 import {GeneralErrors} from "../../Global/BackendErrors";
+import {DatabaseAccessToken} from "../../Global/DatabaseType";
 
 export default class AccessTokensManager {
   public static async findByToken(
     token: string
     // @ts-ignore
   ): ApplicationResponsePromise<{ accessToken: AccessTokenEntity }> {
-    const accessToken = Utils.castMysqlRecordToObject<DatabaseSettings>(
+    const accessToken = Utils.castMysqlRecordToObject<DatabaseAccessToken>(
       await Utils.getMysqlPool().execute(
         "SELECT * FROM access_tokens WHERE token = :token",
         { token }

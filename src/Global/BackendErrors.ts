@@ -28,6 +28,12 @@ export enum AuthenticationErrors {
 export enum UserErrors {
   USER_PSEUDO_MUST_BE_UNIQUE = "USER_PSEUDO_MUST_BE_UNIQUE",
   USER_EMAIL_MUST_BE_UNIQUE = "USER_EMAIL_MUST_BE_UNIQUE",
+  PSEUDO_OR_EMAIL_NOT_FOUND = "PSEUDO_OR_EMAIL_NOT_FOUND",
+}
+
+export enum IdeaErrors {
+  IDEA_SAVE_FILE_ERROR = "IDEA_SAVE_FILE_ERROR",
+  IDEA_PREPARE_NEW_IDEA = "IDEA_PREPARE_NEW_IDEA"
 }
 
 export type ApplicationReject = (error: ApplicationError) => void;

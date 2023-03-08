@@ -1,10 +1,44 @@
 import {DatabaseSettings, DatabaseUser} from "../../Global/DatabaseType";
 import UserEntity from "./UserEntity";
 import Utils from "../../utils/Utils";
-import {GeneralErrors} from "../../Global/BackendErrors";
+import {GeneralErrors, IdeaErrors} from "../../Global/BackendErrors";
 import {ApplicationResponse, ApplicationResponsePromise} from "../../utils/Types";
+import path from "path";
+import fs from "fs";
+import config from "../../config/config";
+import AccessTokenEntity from "../AccessTokens/AccessTokenEntity";
 
 export default class UsersManager {
+  static async findById(
+    id: number
+  ): ApplicationResponsePromise<{ user: UserEntity }> {
+    const user = Utils.castMysqlRecordToObject<DatabaseUser>(
+      await Utils.getMysqlPool().execute(
+        "SELECT * FROM users WHERE id = :id",
+        { id }
+      )
+    );
+
+    if (user) {
+      return {
+        success: true,
+        data: {
+          user: await UserEntity.fromDatabaseObject(user)
+        }
+      }
+    }
+    return {
+      success: false,
+      error: {
+        code: GeneralErrors.OBJECT_NOT_FOUND_IN_DATABASE,
+        message: "This users can't be found in database",
+        details: {
+          id
+        }
+      }
+    };
+  }
+
   static async findByWsToken(
     token: string
   ): ApplicationResponsePromise<{ user: UserEntity }> {
@@ -27,7 +61,7 @@ export default class UsersManager {
       success: false,
       error: {
         code: GeneralErrors.OBJECT_NOT_FOUND_IN_DATABASE,
-        message: "This setting can't be found in database",
+        message: "This users can't be found in database",
         details: {
           token
         }
@@ -65,9 +99,47 @@ export default class UsersManager {
     };
   }
 
+  static async prepareResetPasswordMail(
+    user: UserEntity,
+    tokenEntity: AccessTokenEntity
+  ): ApplicationResponsePromise<{content: string}> {
+    const location = path.join(
+      __dirname,
+      `../../../data/mails/${user.language}/users/reset-password`
+    );
+
+    return new Promise(resolve => {
+      fs.readFile(location, "utf8", (err, data) => {
+        if (err) {
+          resolve({
+            success: false,
+            error: {
+              code: IdeaErrors.IDEA_PREPARE_NEW_IDEA,
+              details: err,
+              message: location
+            }
+          })
+        } else {
+          const tokenUrl = config.wwwHost + "/reset-password/" + tokenEntity.token
+          data = data.replaceAll("#wwwHost#", config.wwwHost);
+          data = data.replaceAll("#username#", user.pseudo);
+          data = data.replaceAll("#email#", user.email);
+          data = data.replaceAll("#date#", tokenEntity.expirationDate.format("HH:mm DD.MM.YYYY"));
+          data = data.replaceAll("#link#", tokenUrl);
+          resolve({
+            success: true,
+            data: {
+              content: data
+            }
+          })
+        }
+      })
+    })
+  }
+
   static async findUserLogin(
     username: string
-  ): ApplicationResponsePromise<{user: UserEntity}> {
+  ): ApplicationResponse<{user: UserEntity}> {
     const user = Utils.castMysqlRecordToObject<DatabaseUser>(
       await Utils.getMysqlPool().execute(
         "SELECT * FROM users WHERE email = :username OR pseudo = :username",

@@ -5,6 +5,7 @@ import path from "path";
 import morgan from "morgan";
 import fs from "fs";
 import fileUpload from "express-fileupload";
+import nodemailer from "nodemailer";
 import { createPool } from "mysql2";
 import bodyParser from "body-parser";
 import cors from "cors";
@@ -16,9 +17,13 @@ import {GeneralErrors} from "./Global/BackendErrors";
 import UsersRouter from "./routes/UsersRouter";
 import TokenManager from "./Global/TokenManager";
 import WsManager from "./services/Ws/WsManager";
+import IdeasRouter from "./routes/IdeasRouter";
+import Mailer from "./services/Mailer/Mailer";
+import moment from "moment";
 
 const app = express();
 const setup = async () => {
+  console.log(__dirname)
   Logger.verbose(`Setup started`);
   app.use(
     morgan("combined", {
@@ -38,21 +43,27 @@ const setup = async () => {
   app.use(fileUpload());
   app.use(bodyParser.urlencoded({limit: "50mb", extended: true}));
   app.use(bodyParser.json({limit: "50mb"}));
+  app.set("trust proxy", 1); // trust first proxy
   app.use(cors({
     origin: (origin, callback) => {
       const whitelist = [
+        "http://localhost:8080",
+        "http://localhost:5000",
         "https://jass.brice-mabillard.ch",
         "https://rest.brice-mabillard.ch",
         "https://ws.brice-mabillard.ch"
       ]
-      if (whitelist.indexOf(origin) !== -1) {
+      if (whitelist.indexOf(origin) !== -1 || config.isDevModeEnabled) {
         callback(null, true)
       } else {
         callback(new Error('Not allowed by CORS'))
       }
     }
   }));
-  app.set("trust proxy", 1); // trust first proxy
+  app.get("/test", function (req, res) {
+    console.log()
+    res.send({});
+  })
   app.use(TokenManager.buildSessionToken)
 
   const pool = createPool({
@@ -89,16 +100,25 @@ const setup = async () => {
       "SELECT * FROM settings"
     )
   );
-  console.log(dbSettings)
   GlobalStore.addItem("dbSettings", dbSettings)
   const ws = new WsManager();
   GlobalStore.addItem("ws", ws);
+  const mailer = new Mailer();
+  GlobalStore.addItem("mailer", mailer);
+
+  async function sendMailQueue() {
+    const MailerObject: Mailer = GlobalStore.getItem("mailer");
+    await MailerObject.sendMailFromQueue();
+  }
+
+  setInterval(sendMailQueue, 2000);
 }
 setup()
   .then(() => {
     Logger.verbose(`Setup finish with success`);
 
     app.use("/users", UsersRouter);
+    app.use("/ideas", IdeasRouter);
     app.get("*", (req: Request, res: Response) => {
       res.json({state: "Page dont exist"});
     });

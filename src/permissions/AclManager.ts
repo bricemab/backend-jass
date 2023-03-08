@@ -25,6 +25,7 @@ export default class AclManager {
         return;
       }
 
+      console.log(request.tokenDecryptedData)
       if (
         AclManager.hasUserAccessToPermission(
           permissionTargeted,

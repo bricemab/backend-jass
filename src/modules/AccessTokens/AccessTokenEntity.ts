@@ -12,6 +12,7 @@ export default class AccessTokenEntity extends MysqlAbstractEntity<boolean> {
   public expirationDate: Moment;
   public token: string;
   public type: TypeAccessTokenType;
+  public isFinished: boolean;
 
   constructor(
     id: number,
@@ -19,7 +20,8 @@ export default class AccessTokenEntity extends MysqlAbstractEntity<boolean> {
     startDate: Moment,
     expirationDate: Moment,
     token: string,
-    type: TypeAccessTokenType
+    type: TypeAccessTokenType,
+    isFinished: boolean
   ) {
     super();
     this.id = id;
@@ -28,6 +30,7 @@ export default class AccessTokenEntity extends MysqlAbstractEntity<boolean> {
     this.expirationDate = expirationDate;
     this.token = token;
     this.type = type;
+    this.isFinished = isFinished;
   }
 
   async save() {
@@ -36,12 +39,13 @@ export default class AccessTokenEntity extends MysqlAbstractEntity<boolean> {
       if (!this.existsInDataBase) {
         responseData = await Utils.executeMysqlRequest(
           Utils.getMysqlPool().execute(
-            "INSERT INTO `access_tokens` (`user_id`, `start_date`, `expiration_date`, `token`, `type`) VALUES (:userId, :startDate, :expirationDate, :token, :type)",
+            "INSERT INTO `access_tokens` (`user_id`, `start_date`, `expiration_date`, `token`, `type`, `is_finished`) VALUES (:userId, :startDate, :expirationDate, :token, :type, :isFinished)",
             {
               userId: this.userId,
               startDate: this.startDate.format("YYYY-MM-DD HH:mm:ss"),
               expirationDate: this.expirationDate.format("YYYY-MM-DD HH:mm:ss"),
               token: this.token,
+              isFinished: this.isFinished,
               type: this.type
             }
           )
@@ -51,13 +55,14 @@ export default class AccessTokenEntity extends MysqlAbstractEntity<boolean> {
       } else {
         responseData = await Utils.executeMysqlRequest(
           Utils.getMysqlPool().execute(
-            "UPDATE `access_tokens` SET `user_id`= :userId, `start_date`= :startDate, `expiration_date`= :expirationDate, `token`= :token, `type`= :type WHERE `id`= :id",
+            "UPDATE `access_tokens` SET `user_id`= :userId, `start_date`= :startDate, `expiration_date`= :expirationDate, `token`= :token, `type`= :type, `is_finished`=:isFinished WHERE `id`= :id",
             {
               userId: this.userId,
               startDate: this.startDate.format("YYYY-MM-DD HH:mm:ss"),
               expirationDate: this.expirationDate.format("YYYY-MM-DD HH:mm:ss"),
               token: this.token,
               type: this.type,
+              isFinished: this.isFinished,
               id: this.id
             }
           )
@@ -97,7 +102,8 @@ export default class AccessTokenEntity extends MysqlAbstractEntity<boolean> {
       moment(databaseObject.start_date),
       moment(databaseObject.expiration_date),
       databaseObject.token,
-      databaseObject.type
+      databaseObject.type,
+      databaseObject.is_finished.toString() === "1"
     );
 
     accessTokenEntity.existsInDataBase = true;
@@ -111,7 +117,8 @@ export default class AccessTokenEntity extends MysqlAbstractEntity<boolean> {
       startDate: this.startDate,
       expirationDate: this.expirationDate,
       token: this.token,
-      type: this.type
+      type: this.type,
+      isFinished: this.isFinished
     };
   }
 }

@@ -6,6 +6,7 @@ import {GeneralErrors} from "../../Global/BackendErrors";
 import Utils from "../../utils/Utils";
 import UsersManager from "./UsersManager";
 import config from "../../config/config";
+import {Language} from "../../utils/Transalator";
 
 export default class UserEntity extends MysqlAbstractEntity<boolean> {
   public id: number;
@@ -15,10 +16,11 @@ export default class UserEntity extends MysqlAbstractEntity<boolean> {
   public registrationDate: Moment;
   public lastConnexionDate: Moment;
   public wsToken: string;
+  public language: Language;
   public isAdmin: boolean
   public isArchived: boolean
 
-  constructor(id: number, pseudo: string, email: string, password: string, registrationDate: Moment, lastConnexionDate: Moment, wsToken: string, isAdmin: boolean, isArchived: boolean) {
+  constructor(id: number, pseudo: string, email: string, password: string, registrationDate: Moment, lastConnexionDate: Moment, wsToken: string, language: Language, isAdmin: boolean, isArchived: boolean) {
     super();
     this.id = id;
     this.pseudo = pseudo;
@@ -27,6 +29,7 @@ export default class UserEntity extends MysqlAbstractEntity<boolean> {
     this.registrationDate = registrationDate;
     this.lastConnexionDate = lastConnexionDate;
     this.wsToken = wsToken;
+    this.language = language;
     this.isAdmin = isAdmin;
     this.isArchived = isArchived;
   }
@@ -37,7 +40,7 @@ export default class UserEntity extends MysqlAbstractEntity<boolean> {
       if (!this.existsInDataBase) {
         responseData = await Utils.executeMysqlRequest(
           Utils.getMysqlPool().execute(
-            "INSERT INTO `users` (`pseudo`, `email`, `password`, `registration_date`, `last_connexion_date`, `ws_token`, `is_admin`, `is_archived`) VALUES (:pseudo, :email, :password, :registrationDate, :lastConnexionDate, :wsToken, :isAdmin, :isArchived)",
+            "INSERT INTO `users` (`pseudo`, `email`, `password`, `registration_date`, `last_connexion_date`, `ws_token`, `language`, `is_admin`, `is_archived`) VALUES (:pseudo, :email, :password, :registrationDate, :lastConnexionDate, :wsToken, :language, :isAdmin, :isArchived)",
             {
               pseudo: this.pseudo,
               email: this.email,
@@ -45,6 +48,7 @@ export default class UserEntity extends MysqlAbstractEntity<boolean> {
               registrationDate: this.registrationDate.format("YYYY-MM-DD HH:mm:ss"),
               lastConnexionDate: this.lastConnexionDate.format("YYYY-MM-DD HH:mm:ss"),
               wsToken: this.wsToken,
+              language: this.language,
               isAdmin: this.isAdmin,
               isArchived: this.isArchived,
             }
@@ -55,7 +59,7 @@ export default class UserEntity extends MysqlAbstractEntity<boolean> {
       } else {
         responseData = await Utils.executeMysqlRequest(
           Utils.getMysqlPool().execute(
-            "UPDATE `users` SET `pseudo`= :pseudo, `email`= :email, `password`= :password, `registration_date`= :registrationDate, `last_connexion_date`= :lastConnexionDate, `ws_token`=:wsToken, `is_admin` = :isAdmin, `is_archived` = :isArchived WHERE `id`= :id",
+            "UPDATE `users` SET `pseudo`= :pseudo, `email`= :email, `password`= :password, `registration_date`= :registrationDate, `last_connexion_date`= :lastConnexionDate, `ws_token`=:wsToken, `language` = :language, `is_admin` = :isAdmin, `is_archived` = :isArchived WHERE `id`= :id",
             {
               pseudo: this.pseudo,
               email: this.email,
@@ -63,6 +67,7 @@ export default class UserEntity extends MysqlAbstractEntity<boolean> {
               registrationDate: this.registrationDate.format("YYYY-MM-DD HH:mm:ss"),
               lastConnexionDate: this.lastConnexionDate.format("YYYY-MM-DD HH:mm:ss"),
               wsToken: this.wsToken,
+              language: this.language,
               isAdmin: this.isAdmin,
               isArchived: this.isArchived,
               id: this.id
@@ -120,6 +125,7 @@ export default class UserEntity extends MysqlAbstractEntity<boolean> {
       moment(databaseObject.registration_date),
       moment(databaseObject.last_connexion_date),
       databaseObject.ws_token,
+      databaseObject.language,
       databaseObject.is_admin,
       databaseObject.is_archived
     );
@@ -136,6 +142,7 @@ export default class UserEntity extends MysqlAbstractEntity<boolean> {
       registrationDate: this.registrationDate,
       lastConnexionDate: this.lastConnexionDate,
       wsToken: this.wsToken,
+      language: this.language,
       isAdmin: this.isAdmin,
       isArchived: this.isArchived
     };
