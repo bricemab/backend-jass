@@ -16,7 +16,7 @@ import jwt from "jsonwebtoken";
 import WsManager from "../services/Ws/WsManager";
 import GlobalStore from "../utils/GlobalStore";
 import Mailer from "../services/Mailer/Mailer";
-import Translator from "../utils/Transalator";
+import Translator, {Language} from "../utils/Transalator";
 import AccessTokensManager from "../modules/AccessTokens/AccessTokensManager";
 
 const UsersRouter = Router();
@@ -182,7 +182,7 @@ UsersRouter.post(
       }
 
       const wsToken = Utils.uniqueId(50);
-      const user = new UserEntity(null, pseudo, email, password, moment(), moment(), wsToken, false,false);
+      const user = new UserEntity(null, pseudo, email, password, moment(), moment(), wsToken, Language.FR, false,false);
       await user.setPasswordEncrypt(password);
       await user.save();
 
