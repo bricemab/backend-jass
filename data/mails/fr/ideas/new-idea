@@ -8,16 +8,7 @@
                 width: 500px;
                 background-color: #252525;
                 font-family: "Montserrat", sans-serif;
-                color: white;
-            }
-            .mail {
-                padding: 0;
-                margin: 0 auto;
-                height: 100%;
-                width: 500px;
-                background-color: #252525;
-                font-family: "Montserrat", sans-serif;
-                color: white;
+                color: #fff;
             }
             .navbar {
                 text-align: center;
@@ -43,6 +34,9 @@
             }
             .content {
                 font-size: 11px;
+            }
+            div {
+                color: #fff;
             }
         </style>
     </head>
