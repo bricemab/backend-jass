@@ -67,15 +67,10 @@ export default class Mailer {
       }
     });
 
-    // const transporter = nodemailer.createTransport({
-    //   host: Utils.getDbSetting('mailerHost'),
-    //   port: 465,
-    //   secure: true, // true for 465, false for other ports
-    //   auth: {
-    //     user: Utils.getDbSetting('mailerUser'), // generated ethereal user
-    //     pass: Utils.getDbSetting('mailerPwd'), // generated ethereal password
-    //   },
-    // });
+    console.log(Utils.getDbSetting('mailerHost'))
+    console.log(Utils.getDbSetting('mailerCertif'))
+    console.log(Utils.getDbSetting('mailerUser'))
+
     try {
       const info = await transporter.sendMail({
         from: `"${displayName}" <${Utils.getDbSetting('mailerUser')}>`,
