@@ -42,6 +42,7 @@ export default class Mailer {
       params.displayName
     );
 
+    console.log(response)
     if (response.success) {
       this.mailsQueue.shift();
     }
