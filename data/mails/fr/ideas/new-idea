@@ -40,7 +40,7 @@
     <body>
     <div class="navbar">
         <div class="logo">
-            <img src="https://jass.brice-mabillard.ch/img/logo_white.0de5c015.svg" alt="logo"/>
+            <img src="https://live.e-jass.ch/logo_white.svg" alt="logo"/>
             <span onclick="location.href = '#wwwHost#'">e-jass</span>
         </div>
     </div>
@@ -54,7 +54,7 @@
         <div>Une réponse à votre idée vous sera envoyée dans les plus brefs délais.</div>
         <br>
         <div>Merci de participer à notre bon développement.</div>
-        <div style="display: flex; align-items: center;">L'équipe e-jass &nbsp;<img src="https://jass.brice-mabillard.ch/img/logo_white.0de5c015.svg" alt="logo" height="20"/></div>
+        <div style="display: flex; align-items: center;">L'équipe e-jass &nbsp;<img src="https://live.e-jass.ch/logo_white.svg" alt="logo" height="20"/></div>
         <br>
         <br>
         <div class="content">
