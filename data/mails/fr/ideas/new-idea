@@ -5,12 +5,13 @@
                 padding: 0;
                 margin: 0 auto;
                 height: 100%;
-                width: 500px;
                 background-color: #252525;
                 font-family: "Montserrat", sans-serif;
                 color: #fff;
             }
             .navbar {
+                width: 500px;
+                margin: 0 auto;
                 text-align: center;
                 padding: 5px 0;
                 background-color: #9b1515;
@@ -30,6 +31,8 @@
                 color: #fff;
             }
             .mail {
+                margin: 0 auto;
+                width: 500px;
                 font-size: 15px;
                 background-color: #252525;
             }
@@ -37,14 +40,14 @@
                 font-size: 11px;
             }
             div {
-                color: #fff;
+                color: #fff !important;
             }
         </style>
     </head>
     <body>
     <div class="navbar">
         <div class="logo">
-            <img src="https://live.e-jass.ch/logo_white.svg" alt="logo"/>
+            <img src="https://live.e-jass.ch/logo_white.png" alt="logo"/>
             <span onclick="location.href = '#wwwHost#'">e-jass</span>
         </div>
     </div>
@@ -57,9 +60,11 @@
         <div>Nous vous remercions pour votre message.</div>
         <div>Une réponse à votre idée vous sera envoyée dans les plus brefs délais.</div>
         <br>
-        <div>Merci de participer à notre bon développement.</div>
-        <div style="display: flex; align-items: center;">L'équipe e-jass &nbsp;<img src="https://live.e-jass.ch/logo_white.svg" alt="logo" height="20"/></div>
-        <br>
+        <div style="display: #display#">Merci de participer à notre bon développement.</div>
+        <div style="display: #display#">
+          <div style="display: flex; align-items: center;">L'équipe e-jass &nbsp;<img src="https://live.e-jass.ch/logo_white.png" alt="logo" height="20"/></div>
+        </div>
+        <br  style="display: #display#">
         <br>
         <div class="content">
             <i>***** Objet *****</i>

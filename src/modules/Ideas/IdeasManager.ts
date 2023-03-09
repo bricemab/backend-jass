@@ -7,6 +7,7 @@ import * as fs from "fs";
 import {IdeaErrors} from "../../Global/BackendErrors";
 import IdeaEntity from "./IdeaEntity";
 import {UploadedFile} from "express-fileupload";
+import Utils from "../../utils/Utils";
 
 export default class IdeasManager {
   public static async newIdeaSendMail(user: UserSession, idea: IdeaEntity) {
@@ -44,6 +45,7 @@ export default class IdeasManager {
           data = data.replace("#username#", user.pseudo);
           data = data.replace("#object#", idea.object);
           data = data.replace("#content#", idea.content);
+          data = Utils.replaceAllString(data, "#display#", idea.mailFeedback ? 'block' : 'none');
           resolve({
             success: true,
             data: {
