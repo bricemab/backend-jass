@@ -121,11 +121,11 @@ export default class UsersManager {
           })
         } else {
           const tokenUrl = config.wwwHost + "/reset-password/" + tokenEntity.token
-          data = data.replaceAll("#wwwHost#", config.wwwHost);
-          data = data.replaceAll("#username#", user.pseudo);
-          data = data.replaceAll("#email#", user.email);
-          data = data.replaceAll("#date#", tokenEntity.expirationDate.format("HH:mm DD.MM.YYYY"));
-          data = data.replaceAll("#link#", tokenUrl);
+          data = Utils.replaceAllString(data, "#wwwHost#", config.wwwHost)
+          data = Utils.replaceAllString(data, "#username#", user.pseudo)
+          data = Utils.replaceAllString(data, "#email#", user.email)
+          data = Utils.replaceAllString(data, "#date#", tokenEntity.expirationDate.format("HH:mm DD.MM.YYYY"))
+          data = Utils.replaceAllString(data, "#link#", tokenUrl)
           resolve({
             success: true,
             data: {

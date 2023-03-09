@@ -84,6 +84,12 @@ export default {
 
     return result;
   },
+  replaceAllString(str: string, find: string, replace: string) {
+    function escapeRegExp(string: string) {
+      return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    }
+    return str.replace(new RegExp(escapeRegExp(find), "g"), replace);
+  },
   shortId() {
     return `_${Math.random()
       .toString(36)
