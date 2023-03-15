@@ -1,4 +1,4 @@
-import express, {Request, Response} from "express";
+import express, {Request, response, Response} from "express";
 import Logger from "./utils/Logger";
 import Utils from "./utils/Utils";
 import path from "path";
@@ -15,11 +15,15 @@ import config from "./config/config";
 import {DatabaseSettings} from "./Global/DatabaseType";
 import {GeneralErrors} from "./Global/BackendErrors";
 import UsersRouter from "./routes/UsersRouter";
+import GlobalRouter from "./routes/GlobalRouter";
 import TokenManager from "./Global/TokenManager";
 import WsManager from "./services/Ws/WsManager";
 import IdeasRouter from "./routes/IdeasRouter";
 import Mailer from "./services/Mailer/Mailer";
 import moment from "moment";
+import RequestManager from "./Global/RequestManager";
+import AclManager from "./permissions/AclManager";
+import {Permissions} from "./permissions/permissions";
 
 const app = express();
 const setup = async () => {
@@ -117,8 +121,18 @@ setup()
   .then(() => {
     Logger.verbose(`Setup finish with success`);
 
+    app.post(
+      "/verify-authentication",
+      AclManager.routerHasPermission(Permissions.specialState.userLoggedIn),
+      async (request, response) => {
+        RequestManager.sendResponse(response, {
+          success: true,
+          data: {}
+        })
+      })
     app.use("/users", UsersRouter);
     app.use("/ideas", IdeasRouter);
+    app.use("/global", GlobalRouter);
     app.get("*", (req: Request, res: Response) => {
       res.json({state: "Page dont exist"});
     });

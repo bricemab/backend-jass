@@ -18,7 +18,7 @@ export default class IdeasManager {
       return;
     }
     const mailer = GlobalStore.getItem('mailer') as Mailer;
-    mailer.addMailQueue(user.email, Translator.t("idea.newIdeaSubject", user.language), mailContent.data.content, "E-Jass")
+    mailer.addMailQueue(user.email, Translator.t("idea.newIdeaSubject", user.language), mailContent.data.content, "E-Jass", true)
   }
 
   public static async prepareNewIdeaFile (

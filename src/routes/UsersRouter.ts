@@ -72,6 +72,25 @@ UsersRouter.post(
         });
       }
       const { user } = userResponse.data;
+      if (!user.isVerified) {
+        const verifiedToken = Utils.uniqueId(50);
+        const accessToken = new AccessTokenEntity(null, user.id, moment(), moment().add("1", "hours"), verifiedToken, TypeAccessTokenType.VERIFIED_REGISTER, false);
+        await accessToken.save();
+
+        const verifiedResponse = await UsersManager.prepareVerifiedAccountMail(user, accessToken);
+        const { content } = verifiedResponse.data!;
+
+        const Mailer = GlobalStore.getItem('mailer') as Mailer;
+        Mailer.addMailQueue(user.email, Translator.t('user.verifiedAccountSubject', user.language), content, "E-Jass", true)
+
+        return RequestManager.sendResponse(response, {
+          success: false,
+          error: {
+            code: AuthenticationErrors.ACCOUNT_NOT_VERIFIED,
+            message: "Account not verified"
+          }
+        });
+      }
       const isPasswordValid = await user.validatePassword(password);
       if (!isPasswordValid) {
         return RequestManager.sendResponse(response, {
@@ -181,37 +200,23 @@ UsersRouter.post(
         })
       }
 
-      const wsToken = Utils.uniqueId(50);
-      const user = new UserEntity(null, pseudo, email, password, moment(), moment(), wsToken, Language.FR, false,false);
+      const user = new UserEntity(null, pseudo, email, password, moment(), moment(), null, "", Language.FR, false, false,false);
       await user.setPasswordEncrypt(password);
       await user.save();
 
-      const accessToken = new AccessTokenEntity(null, user.id, moment(), moment().add("8", "hours"), wsToken, TypeAccessTokenType.WS_TOKEN, false);
+      const verifiedToken = Utils.uniqueId(50);
+      const accessToken = new AccessTokenEntity(null, user.id, moment(), moment().add("1", "hours"), verifiedToken, TypeAccessTokenType.VERIFIED_REGISTER, false);
       await accessToken.save();
 
-      const userJSON = user.toJSON();
-      const userSession: UserSession = {
-        ...userJSON,
-        role: user.isAdmin ? Roles.USER_ADMIN : Roles.USER_LOGGED
-      } as UserSession;
+      const verifiedResponse = await UsersManager.prepareVerifiedAccountMail(user, accessToken);
+      const { content } = verifiedResponse.data!;
 
-      const token = jwt.sign(
-        {
-          currentUser: userSession
-        },
-        Utils.getDbSetting("jwtTokenSecretKey"),
-        {
-          expiresIn: `8h`
-        }
-      );
+      const Mailer = GlobalStore.getItem('mailer') as Mailer;
+      Mailer.addMailQueue(user.email, Translator.t('user.verifiedAccountSubject', user.language), content, "E-Jass", true)
 
       RequestManager.sendResponse(response, {
         success: true,
-        data: {
-          token,
-          user: userSession,
-          role: userSession.role
-        }
+        data: {}
       })
     })
 );
@@ -322,7 +327,7 @@ UsersRouter.post(
 
       const { token } = request.body.data;
 
-      const accessTokenResponse = await AccessTokensManager.findByToken(token);
+      const accessTokenResponse = await AccessTokensManager.findByToken(token, TypeAccessTokenType.PASSWORD_RESET);
       if (!accessTokenResponse.success && !accessTokenResponse.data) {
         return RequestManager.sendResponse(response, accessTokenResponse);
       }
@@ -334,6 +339,71 @@ UsersRouter.post(
         })
       }
 
+      return RequestManager.sendResponse(response, {
+        success: true,
+        data: {}
+      })
+    })
+);
+
+UsersRouter.post(
+  "/verify-account-token",
+  AclManager.routerHasPermission(Permissions.specialState.userLoggedOff),
+  RequestManager.asyncResolver(
+    async (
+      request: ApplicationRequest<{
+        token: string;
+        data: {
+          token: string;
+        };
+      }>,
+      response: Response
+    ) => {
+      if (request.hasValidToken) {
+        return RequestManager.sendResponse(response, {
+          success: false,
+          error: {
+            code: AuthenticationErrors.AUTH_MUST_BE_LOGGED_OFF,
+            message: "You have to be logged off"
+          }
+        })
+      }
+
+      if (
+        !request.body.data &&
+        !request.body.data.token
+      ) {
+        return RequestManager.sendResponse(response, {
+          success: false,
+          error: {
+            code: GeneralErrors.VALIDATION_ERROR,
+            message: "Data are not correctly provided"
+          }
+        })
+      }
+
+      const { token } = request.body.data;
+
+      const accessTokenResponse = await AccessTokensManager.findByToken(token, TypeAccessTokenType.VERIFIED_REGISTER);
+      if (!accessTokenResponse.success && !accessTokenResponse.data) {
+        return RequestManager.sendResponse(response, accessTokenResponse);
+      }
+      const { accessToken } = accessTokenResponse.data;
+      if (accessToken.expirationDate.diff(moment()) < 0 || accessToken.isFinished) {
+        return RequestManager.sendResponse(response, {
+          success: false,
+          data: {}
+        })
+      }
+      accessToken.isFinished = true;
+      await accessToken.save()
+      const userResponse = await UsersManager.findById(accessToken.userId);
+      const { user } = userResponse.data!;
+      console.log(accessToken.userId)
+      console.log(user)
+      user.isVerified = true;
+      user.verifiedDate = moment();
+      await user.save();
       return RequestManager.sendResponse(response, {
         success: true,
         data: {}
@@ -381,7 +451,7 @@ UsersRouter.post(
 
       const { token, password } = request.body.data;
 
-      const accessTokenResponse = await AccessTokensManager.findByToken(token);
+      const accessTokenResponse = await AccessTokensManager.findByToken(token, TypeAccessTokenType.PASSWORD_RESET);
       if (!accessTokenResponse.success && !accessTokenResponse.data) {
         return RequestManager.sendResponse(response, accessTokenResponse);
       }

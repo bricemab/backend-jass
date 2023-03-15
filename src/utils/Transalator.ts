@@ -40,5 +40,10 @@ export default class Translator {
       english: "Reset your E-Jass account password",
       german: "Zurücksetzen des Passworts für Ihr E-Jass-Konto"
     },
+    "user.verifiedAccountSubject": {
+      french: "Vérification de votre compte E-Jass",
+      english: "todo",
+      german: "todo"
+    },
   };
 }

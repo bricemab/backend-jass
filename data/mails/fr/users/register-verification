@@ -1,0 +1,85 @@
+<html>
+<head>
+    <style>
+        html, body {
+            padding: 0;
+            margin: 0 auto;
+            height: 100%;
+            background-color: #252525;
+            font-family: "Montserrat", sans-serif;
+            color: #fff;
+        }
+        .navbar {
+            width: 500px;
+            text-align: center;
+            padding: 5px 0;
+            margin: 0 auto;
+            background-color: #9b1515;
+        }
+        .logo {
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+        .logo img {
+            height: 30px;
+            width: 30px;
+        }
+        .logo span {
+            font-weight: bold;
+            font-size: 15px;
+            color: #fff;
+        }
+        .mail {
+            width: 500px;
+            margin: 0 auto;
+            font-size: 15px;
+            background-color: #252525;
+        }
+        .content {
+            font-size: 11px;
+        }
+        .button {
+            padding: 5px 10px;
+            background-color: #9b1515;
+            text-decoration: none;
+            border-radius: 3px;
+            color: #fff;
+            transition: 0.3s;
+        }
+        .button:hover {
+            box-shadow: 0px 0px 4px 0px #FFFFFF;
+        }
+        div {
+            color: #fff !important;
+        }
+        a {
+            color: #fff !important;
+        }
+    </style>
+</head>
+<body style="background-color: #252525">
+<div class="navbar">
+    <div class="logo">
+        <img src="https://live.e-jass.ch/logo_white.png" alt="logo"/>
+        <span onclick="location.href = '#wwwHost#'">e-jass</span>
+    </div>
+</div>
+<div class="mail">
+    <br>
+    <div>
+        <b>Bonjour #username#,</b>
+    </div>
+    <br>
+    <div>Merci de votre inscription sur E-Jass.</div>
+    <div>Pour finaliser la création de votre compte, vous devez vérifier votre compte en cliquant sur le bouton ci-dessous</div>
+    <br>
+    <a class="button" href="#link#">Vérifier mon compte</a>
+    <br>
+    <br>
+    <div>Veuillez également prendre note que ce lien est valide uniquement jusqu'à #date#.</div>
+    <br>
+    <div style="display: flex; align-items: center;">L'équipe e-jass &nbsp;<img src="https://live.e-jass.ch/logo_white.png" alt="logo" height="20"/></div>
+</div>
+</body>
+</html>

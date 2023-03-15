@@ -30,6 +30,7 @@ export default class TokenManager {
       backendToken &&
       Utils.getDbSetting("backendTokenSecretKeyClient") === backendToken
     ) {
+      console.log(Utils.validateHmacSha256Signature(token, data) || expressRequest.originalUrl.includes("/ideas"))
       if (Utils.validateHmacSha256Signature(token, data) || expressRequest.originalUrl.includes("/ideas")) {
         if (rawToken) {
           TokenManager.decodeToken(rawToken)

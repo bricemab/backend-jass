@@ -70,7 +70,7 @@ export default class AclManager {
         case Permissions.specialState.allowAll:
           return true;
         case Permissions.specialState.userLoggedIn:
-          return !!tokenDecryptedData!.currentUser;
+          return tokenDecryptedData && !!tokenDecryptedData!.currentUser;
         case Permissions.specialState.userLoggedOff:
           return !tokenDecryptedData;
         default:

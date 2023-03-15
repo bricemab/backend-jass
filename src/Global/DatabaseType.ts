@@ -14,10 +14,20 @@ export interface DatabaseUser{
   password: string;
   registration_date: Date;
   last_connexion_date: Date;
+  verified_date: Date | null;
   ws_token: string;
   language: Language;
+  is_verified: boolean;
   is_admin: boolean;
   is_archived: boolean;
+}
+
+export interface DatabaseConcatMessage {
+  id: number;
+  subject: string;
+  content: string;
+  date: Date;
+  email: string;
 }
 
 export interface DatabaseAccessToken {

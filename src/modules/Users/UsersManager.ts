@@ -137,6 +137,44 @@ export default class UsersManager {
     })
   }
 
+
+  static async prepareVerifiedAccountMail(
+    user: UserEntity,
+    accessToken: AccessTokenEntity
+  ): ApplicationResponsePromise<{content: string}> {
+    const location = path.join(
+      __dirname,
+      `../../../data/mails/${user.language}/users/register-verification`
+    );
+
+    return new Promise(resolve => {
+      fs.readFile(location, "utf8", (err, data) => {
+        if (err) {
+          resolve({
+            success: false,
+            error: {
+              code: IdeaErrors.IDEA_PREPARE_NEW_IDEA,
+              details: err,
+              message: location
+            }
+          })
+        } else {
+          const tokenUrl = config.wwwHost + "/verified-account/" + accessToken.token
+          data = Utils.replaceAllString(data, "#wwwHost#", config.wwwHost)
+          data = Utils.replaceAllString(data, "#username#", user.pseudo)
+          data = Utils.replaceAllString(data, "#date#", accessToken.expirationDate.format("HH:mm DD.MM.YYYY"))
+          data = Utils.replaceAllString(data, "#link#", tokenUrl)
+          resolve({
+            success: true,
+            data: {
+              content: data
+            }
+          })
+        }
+      })
+    })
+  }
+
   static async findUserLogin(
     username: string
   ): ApplicationResponse<{user: UserEntity}> {
