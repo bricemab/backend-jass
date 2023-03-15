@@ -53,9 +53,10 @@ const setup = async () => {
       const whitelist = [
         "http://localhost:8080",
         "http://localhost:5000",
-        "https://jass.brice-mabillard.ch",
-        "https://rest.brice-mabillard.ch",
-        "https://ws.brice-mabillard.ch"
+        "https://e-jass.ch",
+        "https://www.e-jass.ch",
+        "https://rest.e-jass.ch",
+        "https://ws.e-jass.ch"
       ]
       if (whitelist.indexOf(origin) !== -1 || config.isDevModeEnabled) {
         callback(null, true)
