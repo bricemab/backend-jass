@@ -55,6 +55,7 @@ const setup = async () => {
         "http://localhost:5000",
         "https://e-jass.ch",
         "https://www.e-jass.ch",
+        "https://preprod.e-jass.ch",
         "https://rest.e-jass.ch",
         "https://ws.e-jass.ch"
       ]
