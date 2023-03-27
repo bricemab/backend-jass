@@ -136,7 +136,7 @@ export default class UserEntity extends MysqlAbstractEntity<boolean> {
       databaseObject.password,
       moment(databaseObject.registration_date),
       moment(databaseObject.last_connexion_date),
-      moment(databaseObject.verified_date),
+      databaseObject.verified_date ? moment(databaseObject.verified_date) : null,
       databaseObject.ws_token,
       databaseObject.language,
       databaseObject.profile_path,
