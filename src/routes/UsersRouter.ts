@@ -528,7 +528,9 @@ UsersRouter.post(
       const userResponse = await UsersManager.findById(currentUser.id);
       const { user } = userResponse.data!;
       user.pseudo = pseudo;
-      await user.setPasswordEncrypt(password);
+      if (password.trim() !== "") {
+        await user.setPasswordEncrypt(password);
+      }
       if (currentUser.email !== email) {
         user.isVerified = false;
         const token = Utils.uniqueId(50)
