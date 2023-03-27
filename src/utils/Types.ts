@@ -60,6 +60,7 @@ export type ApplicationResponsePromise<DataType> = Promise<
 
 export enum TypeAccessTokenType {
   WS_TOKEN = "WS_TOKEN",
+  EDIT_EMAIL_VERIFIED = "EDIT_EMAIL_VERIFIED",
   VERIFIED_REGISTER = "VERIFIED_REGISTER",
   PASSWORD_RESET = "PASSWORD_RESET"
 }

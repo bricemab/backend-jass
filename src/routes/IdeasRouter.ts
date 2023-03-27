@@ -59,10 +59,18 @@ IdeasRouter.post(
     await idea.save();
     await IdeasManager.newIdeaSendMail(currentUser, idea);
     if (request.files) {
-      for (const file of request.files["files"]) {
-        if (IdeasFilesManager.isValidMimeType(file)) {
+      if (request.files["files"].length === undefined) {
+        const file = request.files["files"];
+        if (IdeasFilesManager.isValidMimeImagesType(file)) {
           const uniqueName = Utils.uniqueId(20);
           await IdeasFilesManager.saveNewFile(uniqueName, file, idea.id);
+        }
+      } else {
+        for (const file of request.files["files"]) {
+          if (IdeasFilesManager.isValidMimeImagesType(file)) {
+            const uniqueName = Utils.uniqueId(20);
+            await IdeasFilesManager.saveNewFile(uniqueName, file, idea.id);
+          }
         }
       }
     }

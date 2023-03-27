@@ -42,7 +42,7 @@ export default class IdeasFilesManager {
     });
   }
 
-  public static isValidMimeType (file: UploadedFile) {
+  public static isValidMimeImagesType (file: UploadedFile) {
     const mimeAvailables = [
       'image/jpeg',
       'image/png',

@@ -9,6 +9,7 @@ import {
 import { AuthenticationErrors, GeneralErrors } from "./BackendErrors";
 import RequestManager from "./RequestManager";
 import Utils from "../utils/Utils";
+import config from "../config/config";
 
 export default class TokenManager {
   static buildSessionToken(
@@ -30,8 +31,7 @@ export default class TokenManager {
       backendToken &&
       Utils.getDbSetting("backendTokenSecretKeyClient") === backendToken
     ) {
-      console.log(Utils.validateHmacSha256Signature(token, data) || expressRequest.originalUrl.includes("/ideas"))
-      if (Utils.validateHmacSha256Signature(token, data) || expressRequest.originalUrl.includes("/ideas")) {
+      if (Utils.validateHmacSha256Signature(token, data) || config.whitelistUrls.includes(expressRequest.originalUrl)) {
         if (rawToken) {
           TokenManager.decodeToken(rawToken)
             .then((tokenData: ApplicationUserSessionToken) => {

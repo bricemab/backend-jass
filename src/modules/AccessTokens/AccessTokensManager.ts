@@ -36,4 +36,35 @@ export default class AccessTokensManager {
       }
     };
   }
+  public static async findByUserIdType(
+    userId: number,
+    type: TypeAccessTokenType
+    // @ts-ignore
+  ): ApplicationResponsePromise<{ accessToken: AccessTokenEntity }> {
+    const accessToken = Utils.castMysqlRecordToObject<DatabaseAccessToken>(
+      await Utils.getMysqlPool().execute(
+        "SELECT * FROM access_tokens WHERE user_id = :userId AND `type` = :type AND `is_finished`=0",
+        { userId, type }
+      )
+    );
+
+    if (accessToken) {
+      return {
+        success: true,
+        data: {
+          accessToken: await AccessTokenEntity.fromDatabaseObject(accessToken)
+        }
+      }
+    }
+    return {
+      success: false,
+      error: {
+        code: GeneralErrors.OBJECT_NOT_FOUND_IN_DATABASE,
+        message: "This setting can't be found in database",
+        details: {
+          token
+        }
+      }
+    };
+  }
 }

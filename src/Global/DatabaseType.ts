@@ -17,6 +17,7 @@ export interface DatabaseUser{
   verified_date: Date | null;
   ws_token: string;
   language: Language;
+  profile_path: string | null;
   is_verified: boolean;
   is_admin: boolean;
   is_archived: boolean;
@@ -37,5 +38,6 @@ export interface DatabaseAccessToken {
   expiration_date: Date;
   token: string;
   type: TypeAccessTokenType;
+  email: string;
   is_finished: number;
 }

@@ -33,6 +33,7 @@ export default class IdeasManager {
     return new Promise(resolve => {
       fs.readFile(location, "utf8", (err, data) => {
         if (err) {
+          console.log("Fichier peut-être pas créer dans la langue")
           resolve({
             success: false,
             error: {
