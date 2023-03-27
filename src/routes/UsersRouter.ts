@@ -112,6 +112,7 @@ UsersRouter.post(
 
       user.lastConnexionDate = moment();
       user.wsToken = wsToken;
+      console.log(user);
       await user.save();
 
       const userJSON = user.toJSON();
